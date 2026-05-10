@@ -1,0 +1,523 @@
+// 7VG PANEL FINAL - Scriptable UI
+
+const html = `
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#050505;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+color:white;
+}
+
+body::before{
+content:'';
+position:fixed;
+width:100%;
+height:100%;
+background:
+radial-gradient(circle at top,#8c00ff44,transparent 40%),
+radial-gradient(circle at bottom,#5200ff33,transparent 40%);
+}
+
+/* LOGIN */
+
+.loginBox{
+width:260px;
+padding:18px;
+border-radius:18px;
+background:rgba(12,12,18,.94);
+border:1px solid #8c00ff;
+backdrop-filter:blur(15px);
+box-shadow:0 0 20px #8c00ff55;
+}
+
+.logo{
+text-align:center;
+font-size:24px;
+font-weight:bold;
+color:#c58cff;
+text-shadow:0 0 12px #8c00ff;
+}
+
+.sub{
+text-align:center;
+font-size:11px;
+color:#999;
+margin-bottom:15px;
+}
+
+input[type=password]{
+width:100%;
+padding:10px;
+border:none;
+outline:none;
+border-radius:12px;
+background:#161020;
+color:white;
+margin-bottom:12px;
+border:1px solid #7428ff;
+}
+
+.btn{
+width:100%;
+padding:11px;
+border:none;
+border-radius:12px;
+background:linear-gradient(90deg,#7b00ff,#b000ff);
+color:white;
+font-size:12px;
+font-weight:bold;
+margin-top:8px;
+}
+
+/* PANEL */
+
+.panelBox{
+display:none;
+width:285px;
+padding:15px;
+border-radius:18px;
+background:rgba(12,12,18,.94);
+border:1px solid #8c00ff;
+backdrop-filter:blur(15px);
+box-shadow:0 0 20px #8c00ff55;
+}
+
+.tabs{
+display:flex;
+gap:6px;
+margin-bottom:10px;
+}
+
+.tab{
+flex:1;
+padding:8px;
+border-radius:10px;
+background:#14091f;
+border:1px solid #7428ff;
+text-align:center;
+font-size:11px;
+cursor:pointer;
+}
+
+.page{
+display:none;
+}
+
+.active{
+display:block;
+}
+
+.card{
+background:#12091f;
+border:1px solid #7428ff;
+border-radius:12px;
+padding:10px;
+margin-bottom:8px;
+}
+
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:11px;
+margin-bottom:7px;
+}
+
+/* SWITCH */
+
+.switch{
+position:relative;
+width:38px;
+height:20px;
+}
+
+.switch input{
+opacity:0;
+width:0;
+height:0;
+}
+
+.slider{
+position:absolute;
+cursor:pointer;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:#2d2d2d;
+transition:.3s;
+border-radius:20px;
+}
+
+.slider:before{
+position:absolute;
+content:"";
+height:14px;
+width:14px;
+left:3px;
+bottom:3px;
+background:white;
+transition:.3s;
+border-radius:50%;
+}
+
+.switch input:checked + .slider{
+background:#8c00ff;
+box-shadow:0 0 10px #8c00ff;
+}
+
+.switch input:checked + .slider:before{
+transform:translateX(18px);
+}
+
+.range{
+width:100%;
+}
+
+.fovValue{
+font-size:10px;
+color:#b86cff;
+margin-top:3px;
+text-align:right;
+}
+
+/* LOADING */
+
+.loading{
+display:none;
+margin-top:12px;
+}
+
+.bar{
+width:100%;
+height:5px;
+background:#1a1a1a;
+border-radius:20px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#7b00ff,#d400ff);
+box-shadow:0 0 10px #b86cff;
+transition:.2s;
+}
+
+.percent{
+text-align:right;
+font-size:10px;
+margin-top:4px;
+color:#b86cff;
+}
+
+.footer{
+text-align:center;
+font-size:10px;
+color:#666;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="loginBox" id="loginBox">
+
+<div class="logo">7VG</div>
+<div class="sub">KEY SYSTEM</div>
+
+<input type="password" id="key" placeholder="Digite a KEY">
+
+<button class="btn" onclick="loginPanel()">
+ENTRAR
+</button>
+
+</div>
+
+<!-- PANEL -->
+
+<div class="panelBox" id="panelBox">
+
+<div class="logo">7VG</div>
+<div class="sub">Production Edition</div>
+
+<div class="tabs">
+<div class="tab" onclick="showTab('aim')">MIRA</div>
+<div class="tab" onclick="showTab('opt')">OTIMIZAR</div>
+</div>
+
+<!-- MIRA -->
+
+<div id="aim" class="page active">
+
+<div class="card">
+<div class="top">
+<span>AIMBOT</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>FOV</span>
+<span id="fovNumber">45</span>
+</div>
+
+<input
+type="range"
+class="range"
+min="0"
+max="90"
+value="45"
+oninput="document.getElementById('fovNumber').innerText=this.value">
+</div>
+
+<div class="card">
+<div class="top">
+<span>PUXADA AUTOMÁTICA</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>NO RECOIL</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>SÓ CAPA / ANTI-PEITO</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>ANTI-PINADA</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+</div>
+
+<!-- OTIMIZAÇÃO -->
+
+<div id="opt" class="page">
+
+<div class="card">
+<div class="top">
+<span>REDUZIR LAG</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>120 FPS</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>OTIMIZAR PING</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>ANTI-AQUECIMENTO</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>ECONOMIA DE BATERIA</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+<div class="card">
+<div class="top">
+<span>LIMPAR CACHE</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+
+</div>
+
+<button class="btn" onclick="startPanel()">
+INICIAR PAINEL
+</button>
+
+<div class="loading" id="loading">
+
+<div class="bar">
+<div class="fill" id="fill"></div>
+</div>
+
+<div class="percent" id="percent">
+0%
+</div>
+
+</div>
+
+<div class="footer">
+7VG Production © 2026
+</div>
+
+</div>
+
+<script>
+
+function loginPanel(){
+
+let key = document.getElementById("key").value
+
+if(key === "777"){
+
+document.getElementById("loginBox").style.display = "none"
+document.getElementById("panelBox").style.display = "block"
+
+}else{
+
+alert("KEY INVÁLIDA")
+
+}
+
+}
+
+function showTab(tab){
+
+document.querySelectorAll(".page").forEach(page=>{
+page.style.display="none"
+})
+
+document.getElementById(tab).style.display="block"
+
+}
+
+function startPanel(){
+
+document.getElementById("loading").style.display = "block"
+
+let fill = document.getElementById("fill")
+let percent = document.getElementById("percent")
+
+let value = 0
+
+let timer = setInterval(function(){
+
+value++
+
+fill.style.width = value + "%"
+percent.innerText = value + "%"
+
+if(value >= 100){
+
+clearInterval(timer)
+
+setTimeout(function(){
+
+percent.innerHTML =
+"7VG_SYS_8821<br>" +
+"FF_CACHE_7712<br>" +
+"AIM_CORE_9901<br>" +
+"FPS_ENGINE_4402<br>" +
+"PING_ROUTE_1200<br>" +
+"MEMORY_PATCH_771<br><br>" +
+
+"<span style='color:#66ff99;font-weight:bold;'>" +
+"ARQUIVOS ATIVOS" +
+"</span>"
+
+},600)
+
+}
+
+},50)
+
+}
+
+</script>
+
+</body>
+</html>
+`
+
+let web = new WebView()
+
+await web.loadHTML(html)
+
+await web.present()
+
+let result = await web.evaluateJavaScript(`
+new Promise(resolve => {
+window.completion = resolve
+})
+`, true)
+
+if(result == "openff"){
+
+Safari.open("shortcuts://run-shortcut?name=AbrirFF")
+
+}
